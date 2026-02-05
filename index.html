@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAISOKU ID - Final PDF Fix</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root { --primary: #25D366; --secondary: #007bff; --dark: #2c3e50; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
+        
+        /* UI Utama */
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: var(--dark); }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .item-card { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #eee; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 15px; }
+        .btn-wa { background: var(--primary); color: white; }
+        .btn-pdf { background: var(--secondary); color: white; }
+
+        /* AREA PDF - BERDASARKAN TEMUAN KAMU */
+        #pdf-area { 
+            position: absolute; 
+            left: 0; 
+            top: 0; 
+            width: 700px; /* Lebar tetap agar layout konsisten */
+            background: white; 
+            padding: 40px; 
+            opacity: 0;         /* ✅ Efek: Ter-render tapi transparan */
+            pointer-events: none; /* Biar tidak bisa diklik saat transparan */
+            z-index: -100;      /* Di balik layar utama */
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>SAISOKU.ID</h2>
+    <input type="text" id="nama" placeholder="Nama Pelanggan">
+    <input type="tel" id="hp" placeholder="628xxx">
+
+    <div id="item-list">
+        <div class="item-card">
+            <input type="text" placeholder="Nama Barang" class="in-nama">
+            <input type="number" placeholder="Harga" class="in-harga">
+            <input type="number" placeholder="Qty" class="in-qty" value="1">
+        </div>
+    </div>
+
+    <button class="btn" style="background:#eee" onclick="tambahBaris()">+ Tambah Item</button>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="btn btn-wa" onclick="prosesWA()">Kirim WA</button>
+        <button class="btn btn-pdf" onclick="prosesPDF()">Simpan PDF</button>
+    </div>
+</div>
+
+<div id="pdf-area">
+    <div style="text-align:center;">
+        <h1 style="margin:0;">INVOICE SAISOKU</h1>
+        <p id="out-tgl"></p>
+    </div>
+    <hr>
+    <p><b>Pelanggan:</b> <span id="out-nama"></span></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody id="out-body"></tbody>
+    </table>
+    <h2 style="text-align:right; margin-top:20px;">TOTAL: <span id="out-total"></span></h2>
+</div>
+
+<script>
+    function tambahBaris() {
+        const div = document.createElement('div');
+        div.className = 'item-card';
+        div.innerHTML = `<input type="text" placeholder="Nama Barang" class="in-nama"><input type="number" placeholder="Harga" class="in-harga"><input type="number" placeholder="Qty" class="in-qty" value="1">`;
+        document.getElementById('item-list').appendChild(div);
+    }
+
+    function prosesWA() {
+        const nama = document.getElementById('nama').value || "Pelanggan";
+        const teks = encodeURIComponent(`Halo ${nama}, ini adalah invoice pesanan Anda.`);
+        window.open(`https://wa.me/${document.getElementById('hp').value}?text=${teks}`);
+    }
+
+    async function prosesPDF() {
+        const area = document.getElementById('pdf-area');
+        
+        // Isi Data
+        document.getElementById('out-nama').innerText = document.getElementById('nama').value || "-";
+        document.getElementById('out-tgl').innerText = "Tanggal: " + new Date().toLocaleDateString('id-ID');
+        
+        let html = "";
+        let grandTotal = 0;
+        const names = document.querySelectorAll('.in-nama');
+        const prices = document.querySelectorAll('.in-harga');
+        const qtys = document.querySelectorAll('.in-qty');
+
+        names.forEach((n, i) => {
+            const h = parseFloat(prices[i].value) || 0;
+            const q = parseFloat(qtys[i].value) || 0;
+            const sub = h * q;
+            grandTotal += sub;
+            html += `<tr><td>${n.value || 'Item'}</td><td align="center">${q}</td><td align="right">Rp ${sub.toLocaleString('id-ID')}</td></tr>`;
+        });
+
+        document.getElementById('out-body').innerHTML = html;
+        document.getElementById('out-total').innerText = "Rp " + grandTotal.toLocaleString('id-ID');
+
+        // Setting html2pdf
+        const opt = {
+            margin: 10,
+            filename: `Invoice-${document.getElementById('nama').value || 'Saisoku'}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Eksekusi
+        try {
+            await html2pdf().set(opt).from(area).save();
+        } catch (err) {
+            alert("Gagal cetak PDF: " + err);
+        }
+    }
+</script>
+
+</body>
+</html>
