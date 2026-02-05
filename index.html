@@ -3,315 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAISOKU ID - Premium Billing</title>
+    <title>Saisoku Sales Input</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        /* GOOGLE FONTS */
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
-
         :root {
-            --accent: #6366f1;
-            --accent-dark: #4f46e5;
-            --wa-green: #22c55e;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-sub: #64748b;
+            --primary: #25D366;
+            --secondary: #007bff;
+            --danger: #ff4d4d;
+            --bg: #f0f2f5;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
-            color: var(--text-main);
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
+            padding: 10px;
+            color: #333;
         }
 
-        .app-shell {
-            width: 100%;
+        .container {
             max-width: 500px;
+            margin: auto;
             background: white;
-            min-height: 100vh;
-            position: relative;
-            padding-bottom: 120px; /* Space for bottom buttons */
-        }
-
-        /* HEADER SECTION */
-        .hero-header {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            padding: 40px 25px;
-            color: white;
-            border-radius: 0 0 32px 32px;
-            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3);
-        }
-
-        .hero-header h2 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
-        .hero-header p { margin: 8px 0 0; opacity: 0.9; font-size: 14px; font-weight: 400; }
-
-        .content-area { padding: 25px 20px; }
-
-        /* CARD STYLE */
-        .glass-card {
-            background: var(--card-bg);
-            border: 1px solid #f1f5f9;
-            border-radius: 20px;
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .section-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            display: block;
-        }
+        h2 { text-align: center; margin-bottom: 20px; color: #1a1a1a; }
 
-        /* INPUT STYLE */
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-sub); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
         
         input {
             width: 100%;
-            padding: 14px 16px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             box-sizing: border-box;
-            font-size: 16px;
-            background: #fdfdfd;
-            transition: all 0.3s ease;
-            font-family: inherit;
+            font-size: 16px; /* Mencegah zoom di iPhone */
         }
 
-        input:focus {
-            outline: none;
-            border-color: var(--accent);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        }
-
-        /* ITEMS ROW */
         .item-row {
-            background: #f8fafc;
-            border-radius: 16px;
+            border: 1px solid #eee;
             padding: 15px;
-            margin-bottom: 12px;
-            border: 1px solid #edf2f7;
-            animation: slideIn 0.3s ease-out;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #fafafa;
+            position: relative;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        .btn-add-item {
-            background: white;
-            color: var(--accent);
-            border: 2px dashed #e2e8f0;
+        .btn {
             width: 100%;
-            padding: 14px;
-            border-radius: 14px;
-            font-weight: 600;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s;
+            font-size: 14px;
+            transition: 0.3s;
         }
 
-        .btn-add-item:hover { border-color: var(--accent); background: #f5f3ff; }
+        .btn-tambah { background: #6e6e6e; color: white; margin-bottom: 20px; }
+        .btn-wa { background: var(--primary); color: white; }
+        .btn-pdf { background: var(--secondary); color: white; }
+        .btn-hapus { 
+            background: var(--danger); 
+            color: white; 
+            width: auto; 
+            padding: 5px 10px; 
+            position: absolute; 
+            top: -10px; 
+            right: -5px;
+            border-radius: 50%;
+        }
 
-        /* FOOTER ACTIONS */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            max-width: 500px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 20px;
-            box-sizing: border-box;
+        .total-box {
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: right;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+
+        .actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            border-top: 1px solid #f1f5f9;
+            gap: 10px;
         }
 
-        .btn-main {
-            padding: 16px;
-            border: none;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        /* Preview Area untuk PDF (Hidden di layar, muncul di PDF) */
+        #invoice-pos {
+            padding: 20px;
+            display: none;
         }
-
-        .btn-wa { background: var(--wa-green); color: white; }
-        .btn-pdf { background: var(--text-main); color: white; }
-
-        /* TOTAL SECTION */
-        .total-card {
-            background: #f1f5f9;
-            padding: 15px 20px;
-            border-radius: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .total-card span { font-weight: 600; color: var(--text-sub); }
-        .total-card h2 { margin: 0; color: var(--accent); font-size: 22px; }
-
-        /* HIDDEN AREA */
-        #pdf-area { position: absolute; left: 0; top: 0; width: 700px; opacity: 0; pointer-events: none; z-index: -999; }
     </style>
 </head>
 <body>
 
-<div class="app-shell">
-    <header class="hero-header">
-        <h2>SAISOKU ID</h2>
-        <p>Invoice Creator Professional</p>
-    </header>
+<div class="container">
+    <h2>Input Penjualan</h2>
+    
+    <div class="form-group">
+        <label>Nama Pembeli</label>
+        <input type="text" id="nama" placeholder="Masukkan nama">
+    </div>
+    <div class="form-group">
+        <label>WhatsApp (Contoh: 62812...)</label>
+        <input type="tel" id="hp" placeholder="628xxxxxxxxxx">
+    </div>
 
-    <div class="content-area">
-        <div class="glass-card">
-            <span class="section-label">Informasi Klien</span>
-            <div class="input-group">
-                <label>Nama Pelanggan</label>
-                <input type="text" id="nama" placeholder="Tulis nama lengkap...">
-            </div>
-            <div class="input-group">
-                <label>No. WhatsApp</label>
-                <input type="tel" id="hp" placeholder="Contoh: 628123456xxx">
-            </div>
-        </div>
+    <hr>
 
-        <div class="glass-card">
-            <span class="section-label">Daftar Pesanan</span>
-            <div id="item-list">
-                <div class="item-row">
-                    <input type="text" placeholder="Nama Barang" class="in-nama">
-                    <div class="grid-layout" style="margin-top: 10px;">
-                        <input type="number" placeholder="Harga" class="in-harga" oninput="hitungTotal()">
-                        <input type="number" value="1" class="in-qty" oninput="hitungTotal()">
-                    </div>
-                </div>
+    <div id="item-list">
+        <div class="item-row">
+            <input type="text" placeholder="Nama Barang" class="in-barang">
+            <div class="grid-2">
+                <input type="number" placeholder="Harga" class="in-harga" oninput="hitungTotal()">
+                <input type="number" placeholder="Qty" class="in-qty" value="1" oninput="hitungTotal()">
             </div>
-            <button class="btn-add-item" onclick="tambahBaris()">+ Tambah Produk</button>
-        </div>
-
-        <div class="total-card">
-            <span>Tagihan Total</span>
-            <h2 id="grand-total">Rp 0</h2>
         </div>
     </div>
 
-    <div class="bottom-nav">
-        <button class="btn-main btn-wa" onclick="prosesWA()">
-            Kirim WhatsApp
-        </button>
-        <button class="btn-main btn-pdf" onclick="prosesPDF()">
-            Cetak PDF
-        </button>
+    <button class="btn btn-tambah" onclick="tambahBaris()">+ Tambah Barang</button>
+
+    <div class="total-box">
+        Total: <span id="display-total">Rp 0</span>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-wa" onclick="prosesWA()">Kirim WA</button>
+        <button class="btn btn-pdf" onclick="prosesPDF()">Simpan PDF</button>
     </div>
 </div>
 
-<div id="pdf-area" style="background: white; padding: 50px;">
-    <div style="text-align:center; border-bottom: 2px solid #6366f1; padding-bottom: 20px;">
-        <h1 style="margin:0; font-size: 32px; color: #6366f1;">SAISOKU.ID</h1>
-        <p style="margin:5px 0; color: #64748b;">Invoice Penjualan Digital</p>
-    </div>
-    <div style="margin: 30px 0;">
-        <p><b>Pelanggan:</b> <span id="out-nama"></span></p>
-        <p><b>Tanggal:</b> <span id="out-tgl"></span></p>
-    </div>
-    <table width="100%" style="border-collapse: collapse;">
-        <thead style="background: #f8fafc;">
-            <tr>
-                <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: left;">Item</th>
-                <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: center;">Qty</th>
-                <th style="padding: 12px; border: 1px solid #e2e8f0; text-align: right;">Subtotal</th>
-            </tr>
-        </thead>
-        <tbody id="out-body"></tbody>
-    </table>
-    <div style="text-align: right; margin-top: 30px;">
-        <p style="color: #64748b; margin-bottom: 5px;">Total Tagihan:</p>
-        <h2 style="margin: 0; color: #6366f1; font-size: 28px;" id="out-total"></h2>
-    </div>
+<div id="invoice-pos">
+    <h3 style="text-align:center">STRUK PENJUALAN</h3>
+    <p id="pdf-nama"></p>
+    <p id="pdf-tanggal"></p>
+    <hr>
+    <div id="pdf-items"></div>
+    <hr>
+    <h3 id="pdf-total" style="text-align:right"></h3>
 </div>
 
 <script>
-    // FUNGSI JAVASCRIPT TETAP SAMA AGAR TIDAK ERROR
     function tambahBaris() {
+        const container = document.getElementById('item-list');
         const div = document.createElement('div');
         div.className = 'item-row';
         div.innerHTML = `
-            <input type="text" placeholder="Nama Barang" class="in-nama">
-            <div class="grid-layout" style="margin-top: 10px;">
+            <button class="btn-hapus" onclick="this.parentElement.remove(); hitungTotal();">×</button>
+            <input type="text" placeholder="Nama Barang" class="in-barang">
+            <div class="grid-2">
                 <input type="number" placeholder="Harga" class="in-harga" oninput="hitungTotal()">
-                <input type="number" value="1" class="in-qty" oninput="hitungTotal()">
+                <input type="number" placeholder="Qty" class="in-qty" value="1" oninput="hitungTotal()">
             </div>
-            <p onclick="this.parentElement.remove(); hitungTotal();" style="color:#ef4444; font-size:11px; margin:8px 0 0; cursor:pointer; font-weight:600;">[ Hapus Item ]</p>
         `;
-        document.getElementById('item-list').appendChild(div);
+        container.appendChild(div);
     }
 
     function hitungTotal() {
         let total = 0;
-        const prices = document.querySelectorAll('.in-harga');
+        const hargas = document.querySelectorAll('.in-harga');
         const qtys = document.querySelectorAll('.in-qty');
-        prices.forEach((p, i) => {
-            total += (parseFloat(p.value) || 0) * (parseFloat(qtys[i].value) || 0);
+        
+        hargas.forEach((h, i) => {
+            const valH = parseFloat(h.value) || 0;
+            const valQ = parseFloat(qtys[i].value) || 0;
+            total += valH * valQ;
         });
-        document.getElementById('grand-total').innerText = "Rp " + total.toLocaleString('id-ID');
+        
+        document.getElementById('display-total').innerText = "Rp " + total.toLocaleString('id-ID');
         return total;
     }
 
     function prosesWA() {
         const nama = document.getElementById('nama').value || "Pelanggan";
-        const total = document.getElementById('grand-total').innerText;
-        const teks = encodeURIComponent(`Halo ${nama},\nBerikut adalah invoice dari SAISOKU.\nTotal Belanja: *${total}*\n\nTerima kasih!`);
-        if(!document.getElementById('hp').value) return alert("Isi nomor WA!");
-        window.open(`https://wa.me/${document.getElementById('hp').value}?text=${teks}`);
+        const hp = document.getElementById('hp').value;
+        const barangs = document.querySelectorAll('.in-barang');
+        const hargas = document.querySelectorAll('.in-harga');
+        const qtys = document.querySelectorAll('.in-qty');
+        
+        let teks = `*PESANAN BARU*\n--------------------------\n`;
+        teks += `*Nama:* ${nama}\n\n*Daftar Barang:*\n`;
+        
+        barangs.forEach((b, i) => {
+            const n = b.value || "Produk";
+            const h = parseFloat(hargas[i].value) || 0;
+            const q = qtys[i].value || 0;
+            teks += `- ${n} (${q}x) : Rp ${h.toLocaleString('id-ID')}\n`;
+        });
+        
+        teks += `\n*TOTAL: ${document.getElementById('display-total').innerText}*\n--------------------------`;
+        
+        if(hp) {
+            window.open(`https://wa.me/${hp}?text=${encodeURIComponent(teks)}`);
+        } else {
+            navigator.clipboard.writeText(teks);
+            alert("Teks disalin! (Nomor WA kosong)");
+        }
     }
 
-    async function prosesPDF() {
-        document.getElementById('out-nama').innerText = document.getElementById('nama').value || "-";
-        document.getElementById('out-tgl').innerText = new Date().toLocaleDateString('id-ID');
-        let html = "";
-        let total = 0;
-        const names = document.querySelectorAll('.in-nama');
-        const prices = document.querySelectorAll('.in-harga');
+    function prosesPDF() {
+        // Isi data ke template PDF
+        document.getElementById('pdf-nama').innerText = "Pembeli: " + (document.getElementById('nama').value || "-");
+        document.getElementById('pdf-tanggal').innerText = "Tanggal: " + new Date().toLocaleDateString('id-ID');
+        
+        let itemHtml = "";
+        const barangs = document.querySelectorAll('.in-barang');
+        const hargas = document.querySelectorAll('.in-harga');
         const qtys = document.querySelectorAll('.in-qty');
-        names.forEach((n, i) => {
-            const sub = (parseFloat(prices[i].value) || 0) * (parseFloat(qtys[i].value) || 0);
-            total += sub;
-            html += `<tr><td style="padding:12px; border:1px solid #e2e8f0;">${n.value || 'Item'}</td><td align="center" style="border:1px solid #e2e8f0;">${qtys[i].value}</td><td align="right" style="border:1px solid #e2e8f0;">Rp ${sub.toLocaleString('id-ID')}</td></tr>`;
+        
+        barangs.forEach((b, i) => {
+            const n = b.value || "Produk";
+            const h = parseFloat(hargas[i].value) || 0;
+            const q = qtys[i].value || 0;
+            itemHtml += `<p>${n} (${q}x) <span style="float:right">Rp ${(h*q).toLocaleString('id-ID')}</span></p>`;
         });
-        document.getElementById('out-body').innerHTML = html;
-        document.getElementById('out-total').innerText = "Rp " + total.toLocaleString('id-ID');
+        
+        document.getElementById('pdf-items').innerHTML = itemHtml;
+        document.getElementById('pdf-total').innerText = "TOTAL: " + document.getElementById('display-total').innerText;
 
+        // Generate PDF
+        const element = document.getElementById('invoice-pos');
+        element.style.display = 'block'; // Munculkan sebentar untuk capture
+        
         const opt = {
             margin: 10,
-            filename: `Invoice-Saisoku-${document.getElementById('nama').value}.pdf`,
+            filename: 'Saisoku-Invoice.pdf',
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-        await html2pdf().set(opt).from(document.getElementById('pdf-area')).save();
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            element.style.display = 'none'; // Sembunyikan lagi
+        });
     }
 </script>
 
